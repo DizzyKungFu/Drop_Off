@@ -1,0 +1,6 @@
+Standard
+Drop off dignitaries and defend stations.
+080 #c404c4ff 
+147 #9da36c
+
+

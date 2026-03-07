@@ -1,0 +1,1036 @@
+@map/first_map "Drop Off"
+" Three station commanders were attending a conference at Starbase 8 and now they need to be returned back to their individual stations by your ship. However, Kralien and Skaraan warships have been spotted in the area!
+" (This is a recreation of a mission by Andre Odendaal, from an earlier version of Artemis.)
+
+## Drop_Off by Jim Gillispie (orginally by Andre Odendaal in Artemis 2.x)
+## THIS IS MISSION VERSION: 1.2.8
+##
+## UPDATE HISTORY
+## 1.0.0    initial release
+##
+## 1.0.1:   label indentation added, as per Doug's recommendation (I'm still not exactly sure why, but I'm just a novice coder, so I trust him!)
+##          increased starting Kralien distance from stations (they were too close before, inducing early player panic)
+##          increased time until the reminder message is sent after picking up commanders (i.e. space trucker CB vibe)
+##          added the (necessary) "players" variable definintion in the two de-cloak labels, otherwise would cause MAST crash
+##
+## 1.0.2:   added some dense nebula regions and a big black hole (Gaia BH3) to make the sector a little more interesting
+##          added support for multi-ship by checking to make sure which ship is carrying the commanders when docking
+##          added ending checking for the case in which the player ship with the commanders is destroyed
+##          sped up the ending_triggered label loop slightly
+##          added a classic "big message" style intro message on main screen
+##
+## 1.0.2a:   added support for Cosmos v1.0.2.01
+##          extended player sensors by adding a cheat: "spy asteroids", this will give more warning of Kraliens approaching
+##          same as above, but with "nav asteroids" for nebula mapping
+##          slightly increased the Kralien's starting distance from stations (again), now the Kraliens will destroy either DS-99 or DS-101 within 15-16 minutes without intervention (this should be perfect timing, creating a total of 25-30 minutes for a successful mission play-through)
+##          added nav points for drop off stations, and also for Gaia BH3
+##          made sure de-cloaking of Skaraans only occurs once the commanders have been picked up (story works better this way)
+##          fixed comms messages that were originally assigned to the incorrect stations
+##          slightly sooner de-cloak around DS-106, since these are the only enemies likely to threaten this station
+##
+## 1.0.6:   updated to work with Cosmos v1.0.6 release on Steam/Itch.io (FYI: that version uses the v1.0.4 SBS MAST libraries)
+##          added friendly TSN ships that are commandable by Comms, the number of ships selectable by the "Friendly Ships" drop-down box
+##          better checking for end-of-mission situations
+##          EVEN SOONER de-cloak around DS-106
+##          included a modified preferences.json for increased 2D and 3D render distances (needs to be copied manually two folders up over exisiting preferences.json on the server and all clients)
+##          added enemy comms messages (to deepen the main story)
+##          added an accretion disc and custom scan info to Gaia BH3 (world-building)
+##          added voice-acting audio files for Admiral Akana, base Comms officers, and the Skaraans
+##          included voice-acting credits in "big message"
+##
+## 1.1.3    updated to work with Cosmos .exe version 1.1.3 and SBS/MAST libraires version 1.1.0
+##          switched friendly eyes to use the link() function
+##          removed the navigation asteroids, I think there were too many friendly eyes?! But I kept the spy asteroids to spot the Kraliens.
+##          assigned static faces to the bases and talking Skaraans
+##          changed the creation of friendly TSN ships to use prefab_npc_defender() for better default AI
+##          Admiral Akana is now a lifeform on SB-8, rather than the face of the station
+##          added the commanders as lifeforms that move between stations and the player ship
+##          added mine defenses for the base when lethal terrain is selected, moved NPC ships to avoid said mines
+##          main screen visuals for voice-acted characters
+##          added Quindar-like tones to the voice acting files, to make people pay more attention
+##          more naturally shaped nebulas. Also turned off selectablilty for nebulas to make traversing nebulas simpler.
+##          Comms can now question the Commanders during the mission
+##          created periodic waterfall status readings on the location of the Commanders
+##
+## 1.1.6    updated to work with Cosmos .exe version 1.1.6
+##          mission logo now appears briefly on the Main Screen at start
+##          arguably the actual difficulty scales slower at DIFFICULTY 6+, so I added some extra Kralien fleets at DIFFICULTYs 6, 8, and 10
+##          forced asteroids to be selectable (cuz they are fun to shoot!)
+##          tweaked Gaia the black hole's accrection disc and gravity distance
+##          increased default scanning and zoom range for asteroids/nebulas in the custom preferences.json (needs to be copied over the file 2 folders up)
+##          unique roles were causing unwanted tabs for Science/Comms, so I switched to another method to select individual ships from fleets
+##          Skaraan attacks are now triggered by distance check from stations, rather than entering a rectanglular area
+##
+## 1.2.1    updated to work with Cosmos .exe version 1.2.1
+##          I changed the icon that appears on the server, but I may yet change it again in the future...
+##          again optimized the preferences.json(needs to be copied over the file 2 folders up) for best mission playablity
+##
+## 1.2.3    updated to work with Cosmos .exe version 1.2.3 (using MAST libraries 1.3.0)
+##          changed the versioning numbers (both historically and going forward) to be more aligned with Thom's Cosmos release versioning
+##          delayed the victory for a extra 5 seconds to give time to read any comms messages
+##
+## 1.2.5    updated to work with Cosmos .exe version 1.2.5 (using MAST libraries 1.3.0)
+##          more Skaraans will appear at higher difficulties
+##          made reminder message from Akana appear slightly sooner
+##
+## 1.2.8    updated to work with Cosmos .exe version 1.2.8 (using MAST libraries 1.3.0)
+##          using new version of settings.yaml from Legendary, but tweaked for Drop_Off
+##          had to include new relationships/sides setup
+##          tweaked Gaea's accretion disc color
+##          fixed missing Comms Badge problem
+##
+## Future:  update nebulae to use new functions? Or upgrade old functions to use Warp slowing?
+##          ability for Skaraans to detect where the commanders are?
+##          reminder about tricksy Skaraan tech? 
+##          allow players to surrender Cmdr Thompson to Skaraan justice? (e.g. jettison him into an "escape pod", i.e. shuttle?) Maybe Cmdr Richards too? A moral dilemma? What would Picard do? Then just auto-fail the mission.
+##          Comms "Receiving Hail" button for voiced dialog? Replayablity of messages warrented?
+##          further tweak Gaia the black hole's accrection disc, distance, density, gravity, etc. for maximum realism
+##          fix PNG image stretching at certain resolutions
+##          find a way to get blue nebulas with the new functions (test functions in tile.py still work, but are dated)
+##          fix missing Comms Badge on stations with lifeforms
+
+
+metadata: ```
+Properties:
+  Main:
+    Player Ships: 'gui_int_slider("$text:int;low: 1.0;high:8.0;", var= "PLAYER_COUNT")'
+    Difficulty: 'gui_int_slider("$text:int;low: 1.0;high:11.0;", var= "DIFFICULTY")'
+  Map:
+    Terrain: 'gui_drop_down("$text: {TERRAIN_SELECT};list: none, few, some, lots, max",var="TERRAIN_SELECT")'
+    Lethal Terrain: 'gui_drop_down("$text: {LETHAL_SELECT};list: none, few, some, lots, max", var="LETHAL_SELECT")'
+    Friendly Ships: 'gui_drop_down("$text: {FRIENDLY_SELECT};list: none, few, some, lots, max", var="FRIENDLY_SELECT")'
+    Monsters: 'gui_drop_down("$text: {MONSTER_SELECT};list: none, few, some, lots, max", var="MONSTER_SELECT")'
+    Upgrades: 'gui_drop_down("$text: {UPGRADE_SELECT};list: none, few, some, lots, max", var= "UPGRADE_SELECT")'
+    Time Limit: 'gui_input("desc: Minutes;", var="GAME_TIME_LIMIT")'
+```
+
+===== drop_off_start ======
+
+    terrain_value = terrain_to_value(TERRAIN_SELECT)
+    lethal_value =  terrain_to_value(LETHAL_SELECT)
+    friendly_value = terrain_to_value(FRIENDLY_SELECT)
+    monster_value = terrain_to_value(MONSTER_SELECT)
+    upgrade_value = terrain_to_value(UPGRADE_SELECT)
+
+    print("DIFFICULTY: ", DIFFICULTY)
+    print("terrain: ", terrain_value)
+    print("lethal: ", lethal_value)
+    print("friendly: ", friendly_value)
+    print("monster: ", monster_value)
+    print("upgrade: ", upgrade_value)
+
+    #CREATE Sides and diplomacy
+    #
+    # These are the side used for LegendaryMissions
+    #
+    # Some examples of different ways to set up a new side.
+
+    #region Spawn TSN side
+    tsn = await prefab_spawn(prefab_side_generic, data={"key":"tsn"}) #Spawn using only the key
+    # Add a display name, description and color programatically
+    side_set_display_name(tsn, "TSN") 
+    side_set_description(tsn, "The Terran Stellar Navy")
+    side_set_icon_color(tsn, "#07F")
+    #endregion
+
+    #region Spawn Raider side
+    # Everything can be set in the prefab data.
+    raider = await prefab_spawn(prefab_side_generic, data={"key":"raider", "name": "Raider", "color": "#F00", "desc":"Hostile Aliens"})
+    #endregion
+
+    #region Spawn Civ side
+    # Some combination of prefab and functions can be nice.
+    civ = await prefab_spawn(prefab_side_generic, data={"key":"civ","name": "Civ"})
+    side_set_description(civ, "Civilians. Protect them from attack.")
+    side_set_icon_color(civ, "white") #NOTE that you can use color names in addition to hexidecimal
+    #endregion
+
+    # Now we set the relationships between the sides.
+    side_set_relations(tsn, raider, sbs.DIPLOMACY.HOSTILE)
+    side_set_relations(raider, civ, sbs.DIPLOMACY.HOSTILE)
+    side_set_relations(civ, tsn, sbs.DIPLOMACY.ALLIED)
+
+    #The colors for diplomatic relations can be set via script.
+    sim.set_diplomacy_color(sbs.DIPLOMACY.HOSTILE,"#F00")
+    sim.set_diplomacy_color(sbs.DIPLOMACY.ALLIED,"#0AA")
+
+    await task_schedule(spawn_players)
+
+    terrain_asteroid_clusters(terrain_value, selectable=True)
+    terrain_spawn_nebula_clusters(terrain_value, selectable=False)
+    terrain_spawn_pickups(upgrade_value)
+    terrain_spawn_monsters(monster_value)
+    terrain_spawn_black_holes(lethal_value)
+
+    ## spawn some specific terrain
+    ## Using Doug's test functions for terrain (instead of terrain_spawn_nebula_box or terrain_spawn_nebula_sphere) so I can still get the dark blue nebulas
+    test_spawn_nebula_box(-20000, 0, -55000, 170000, 20000, 2.0, 3, 3000)
+    test_spawn_nebula_sphere(-27000, 0, -45000, 9000, 1.0, 2, 3000)
+    test_spawn_nebula_sphere(153000, 0, -45000, 9000, 1.0, 2, 3000)
+    test_spawn_nebula_box(-140000, 0, -110000, 78000, 138000, 3.0, 3, 3000)
+    test_spawn_nebula_sphere(-100000, 0, -115000, 38000, 2.0, 2, 3000)
+    test_spawn_nebula_sphere(-109000, 0, 35000, 30000, 2.0, 2, 3000)
+    test_spawn_nebula_sphere(-119000, 0, 85000, 30000, 2.0, 2, 3000)
+    test_spawn_nebula_box(-100000, 0, 62000, 140000, 60000, 3.0, 3, 3000)
+    test_spawn_nebula_sphere(56000, 0, 92000, 26000, 2.0, 2, 3000)
+    #test_spawn_asteroid_sphere(55000,0,52000, radius=2000, density_scale=3.0, density=3, height=2000
+    terrain_spawn_asteroid_sphere(55000,0,52000, radius=2000, density_scale=3.0, density=3, height=2000, selectable=True)
+
+    ## Create a famous nearby big black hole! And a nav point so it doesn't surprise a player ship
+    shared bbh = to_object(terrain_spawn_black_hole(64000, -14, -25000, 4000, 4.0, 4.0, 800))
+    bbh.name = "Gaia BH3"
+    add_role(bbh.id, 'bbh')
+    nav_id_bbh = sim.add_navpoint(64000, 1, -25000, "Gaia BH3", "#A44")
+
+    ## Some tasty treats for the big black hole to eat! Will it get even bigger?
+    ## prefab_spawn(prefab_fleet_raider, {"race": "kralien", "fleet_difficulty": DIFFICULTY, "START_X": 67000, "START_Y": 0, "START_Z": -22000})
+    ## terrain_spawn_asteroid_sphere(64000, 0, -25000, radius=1000, density_scale=2.0, density=2, height=1000, selectable=True)
+    ## prefab_spawn(prefab_npc_defender, {"START_X": 67000, "START_Y": 0, "START_Z": -22000, "name": "TSN Theseus", "ship_art": "tsn_battle_cruiser"})
+    ## BROKEN! Black holes do not properly suck non-player objects :(
+    ## Bug registered at: https://github.com/artemis-sbs/LegendaryMissions/issues/344
+
+    ## Since that's broke, I'm freeking going to hand-make an accretion disc!!! But damn, this is a lot of work!
+    ## NORTH TAIL (Removed closest nebula to reduce density)
+/*     eventhorizon01 = terrain_spawn(64000, 0, -24000,None, "#, nebula", "nebula", "behav_nebula")
+    terrain_setup_nebula_red(eventhorizon01)
+    eventhorizon01.blob.set("unselectable", 1) */
+    eventhorizon02 = terrain_spawn(64500, 0, -23000,None, "#, nebula", "nebula", "behav_nebula")
+#    terrain_setup_nebula_red(eventhorizon02)
+    eventhorizon02.blob.set("unselectable", 1)
+    eventhorizon03 = terrain_spawn(65500, 0, -22500,None, "#, nebula", "nebula", "behav_nebula")
+#    terrain_setup_nebula_red(eventhorizon03)
+    eventhorizon03.blob.set("unselectable", 1)
+    ## SOUTH TAIL (Removed closest nebula to reduce density)
+/*     eventhorizon04 = terrain_spawn(64000, 0, -26000,None, "#, nebula", "nebula", "behav_nebula")
+    terrain_setup_nebula_red(eventhorizon04)
+    eventhorizon04.blob.set("unselectable", 1) */
+    eventhorizon05 = terrain_spawn(63500, 0, -27000,None, "#, nebula", "nebula", "behav_nebula")
+#    terrain_setup_nebula_red(eventhorizon05)
+    eventhorizon05.blob.set("unselectable", 1)
+    eventhorizon06 = terrain_spawn(62500, 0, -27500,None, "#, nebula", "nebula", "behav_nebula")
+#    terrain_setup_nebula_red(eventhorizon06)
+    eventhorizon06.blob.set("unselectable", 1)
+    ## NORTH-EAST TAIL (Removed closest nebula to reduce density)
+/*     eventhorizon07 = terrain_spawn(64900, 0, -24450,None, "#, nebula", "nebula", "behav_nebula")
+    terrain_setup_nebula_red(eventhorizon07)
+    eventhorizon07.blob.set("unselectable", 1) */
+    eventhorizon08 = terrain_spawn(66000, 0, -24250,None, "#, nebula", "nebula", "behav_nebula")
+#    terrain_setup_nebula_red(eventhorizon08)
+    eventhorizon08.blob.set("unselectable", 1)
+    eventhorizon09 = terrain_spawn(67000, 0, -24750,None, "#, nebula", "nebula", "behav_nebula")
+#    terrain_setup_nebula_red(eventhorizon09)
+    eventhorizon09.blob.set("unselectable", 1)
+    ## NORTH-WEST TAIL (Removed closest nebula to reduce density)
+/*     eventhorizon10 = terrain_spawn(63100, 0, -24450,None, "#, nebula", "nebula", "behav_nebula")
+    terrain_setup_nebula_red(eventhorizon10)
+    eventhorizon10.blob.set("unselectable", 1) */
+    eventhorizon11 = terrain_spawn(62250, 0, -23750,None, "#, nebula", "nebula", "behav_nebula")
+#    terrain_setup_nebula_red(eventhorizon11)
+    eventhorizon11.blob.set("unselectable", 1)
+    eventhorizon12 = terrain_spawn(62250, 0, -22500,None, "#, nebula", "nebula", "behav_nebula")
+#    terrain_setup_nebula_red(eventhorizon12)
+    eventhorizon12.blob.set("unselectable", 1)
+    ## SOUTH-EAST TAIL (Removed closest nebula to reduce density)
+/*     eventhorizon13 = terrain_spawn(64900, 0, -25550,None, "#, nebula", "nebula", "behav_nebula")
+    terrain_setup_nebula_red(eventhorizon13)
+    eventhorizon13.blob.set("unselectable", 1) */
+    eventhorizon14 = terrain_spawn(65750, 0, -26250,None, "#, nebula", "nebula", "behav_nebula")
+#    terrain_setup_nebula_red(eventhorizon14)
+    eventhorizon14.blob.set("unselectable", 1)
+    eventhorizon15 = terrain_spawn(66000, 0, -27250,None, "#, nebula", "nebula", "behav_nebula")
+#    terrain_setup_nebula_red(eventhorizon15)
+    eventhorizon15.blob.set("unselectable", 1)
+    ## SOUTH-WEST TAIL (Removed closest nebula to reduce density)
+/*     eventhorizon16 = terrain_spawn(63100, 0, -25550,None, "#, nebula", "nebula", "behav_nebula")
+    terrain_setup_nebula_red(eventhorizon16)
+    eventhorizon16.blob.set("unselectable", 1) */
+    eventhorizon17 = terrain_spawn(62250, 0, -25750,None, "#, nebula", "nebula", "behav_nebula")
+#    terrain_setup_nebula_red(eventhorizon17)
+    eventhorizon17.blob.set("unselectable", 1)
+    eventhorizon18 = terrain_spawn(61250, 0, -25250,None, "#, nebula", "nebula", "behav_nebula")
+#    terrain_setup_nebula_red(eventhorizon18)
+    eventhorizon18.blob.set("unselectable", 1)
+
+    ## Instead of random stations, create specific ones. These are all important to the story.
+    ## Starting station
+    shared station8 = to_object(npc_spawn(67000, 0, -67000, "SB-8", "tsn, station", "starbase_command", "behav_station"))
+    ##set_face(station8.id, "ter #acb057 0 0;ter #acb057 3 1;ter #acb057 1 3;ter #fff 12 0 14 -2;ter #fff 1 4;ter #ffffff 11 0 12 4;")
+    set_face(station8.id, "ter #492816 0 0;ter #492816 0 2;ter #492816 1 2;ter #1E1a33 7 3 6 -2;ter #fff 14 0 14 -2;ter #fff 2 4;ter #fff 13 1 20 4;")
+
+    ## Also need to create stations DS-99, DS-101, DS-106
+    shared station99 = to_object(npc_spawn(-60000, 200, -63000, "DS-99", "tsn, station", "starbase_civil", "behav_station"))
+    set_face(station99.id, "ter #FA01B3 8 1 6  -2;ter #00c3e6 3 0;ter #00c3e6 4 0;ter #00c3e6 4 2;ter #FA01B3 6 2 6 -2;ter #fff 5 5;")
+    shared station101 = to_object(npc_spawn(61000, 50, 52000, "DS-101", "tsn, station", "starbase_civil", "behav_station"))
+    set_face(station101.id, "ter #ffffff 3 0;ter #ffffff 4 1;ter #ffffff 4 3;ter #FAF0BE 6 3 6 -2;ter #fff 5 5;")
+    shared station106 = to_object(npc_spawn(-67000, -200, 37000, "DS-106", "tsn, station", "starbase_civil", "behav_station"))
+    set_face(station106.id, "ter #efe6dd 0 0;ter #efe6dd 2 1;ter #efe6dd 2 2;ter #97502d 6 1 6 -2;ter #fff 2 5;ter #fff 13 2 20 4;")
+
+    ## Mine defenses
+    ## wrap a minefield around SB-8
+    if lethal_value > 0:
+        startAngle = random.randrange(130,160)
+        angle = random.randrange(110,160)
+        endAngle = startAngle + angle
+        depth = 1#random.randrange(2,3)
+    #        width = random.randrange(int(angle/6), int(angle/3))
+        width = int(5 * (lethal_value / 2))
+        widthArray = [int(angle / 5.0)]
+        inner = random.randrange(1200,1500)
+        cluster_spawn_points = scatter_ring(width, depth, 67000, 0, -67000, inner, inner, startAngle, endAngle)
+        # Random type, but same for cluster
+        for v2 in cluster_spawn_points:
+            #keep value between -500 and 500??
+    #                v2.y = abs(v2.y) % 500 * (v2.y/abs(v2.y))
+            mine_obj = terrain_spawn( v2.x, v2.y + random.randrange(-300,300), v2.z,None, None, "danger_1a", "behav_mine")
+            mine_obj.blob.set("damage_done", 5)
+            mine_obj.blob.set("blast_radius", 1000)
+            mine_obj.engine_object.blink_state = -5
+    
+    ## wrap a minefield around DS-99
+    if lethal_value > 0:
+        startAngle = random.randrange(-30,5)
+        angle = random.randrange(50,100)
+        endAngle = startAngle + angle
+        depth = 1#random.randrange(2,3)
+    #        width = random.randrange(int(angle/6), int(angle/3))
+        width = int(5 * (lethal_value / 2))
+        widthArray = [int(angle / 5.0)]
+        inner = random.randrange(1200,1500)
+        cluster_spawn_points = scatter_ring(width, depth, -60000, 200, -63000, inner, inner, startAngle, endAngle)
+        # Random type, but same for cluster
+        for v2 in cluster_spawn_points:
+            #keep value between -500 and 500??
+    #                v2.y = abs(v2.y) % 500 * (v2.y/abs(v2.y))
+            mine_obj = terrain_spawn( v2.x, v2.y + random.randrange(-300,300), v2.z,None, None, "danger_1a", "behav_mine")
+            mine_obj.blob.set("damage_done", 5)
+            mine_obj.blob.set("blast_radius", 1000)
+            mine_obj.engine_object.blink_state = -5
+
+    ## wrap a minefield around DS-101
+    if lethal_value > 0:
+        startAngle = random.randrange(60,90)
+        angle = random.randrange(90,140)
+        endAngle = startAngle + angle
+        depth = 1#random.randrange(2,3)
+    #        width = random.randrange(int(angle/6), int(angle/3))
+        width = int(5 * (lethal_value / 2))
+        widthArray = [int(angle / 5.0)]
+        inner = random.randrange(1200,1500)
+        cluster_spawn_points = scatter_ring(width, depth, 61000, 50, 52000, inner, inner, startAngle, endAngle)
+        # Random type, but same for cluster
+        for v2 in cluster_spawn_points:
+            #keep value between -500 and 500??
+    #                v2.y = abs(v2.y) % 500 * (v2.y/abs(v2.y))
+            mine_obj = terrain_spawn( v2.x, v2.y + random.randrange(-300,300), v2.z,None, None, "danger_1a", "behav_mine")
+            mine_obj.blob.set("damage_done", 5)
+            mine_obj.blob.set("blast_radius", 1000)
+            mine_obj.engine_object.blink_state = -5
+
+    ## wrap a minefield around DS-106
+    if lethal_value > 0:
+        startAngle = random.randrange(-90,-60)
+        angle = random.randrange(90,140)
+        endAngle = startAngle + angle
+        depth = 1#random.randrange(2,3)
+    #        width = random.randrange(int(angle/6), int(angle/3))
+        width = int(5 * (lethal_value / 2))
+        widthArray = [int(angle / 5.0)]
+        inner = random.randrange(1200,1500)
+        cluster_spawn_points = scatter_ring(width, depth, -67000, -150, 37000, inner, inner, startAngle, endAngle)
+        # Random type, but same for cluster
+        for v2 in cluster_spawn_points:
+            #keep value between -500 and 500??
+    #                v2.y = abs(v2.y) % 500 * (v2.y/abs(v2.y))
+            mine_obj = terrain_spawn( v2.x, v2.y + random.randrange(-300,300), v2.z,None, None, "danger_1a", "behav_mine")
+            mine_obj.blob.set("damage_done", 5)
+            mine_obj.blob.set("blast_radius", 1000)
+            mine_obj.engine_object.blink_state = -5
+
+    ## Create lifeforms
+    shared lf_Akana = lifeform_spawn("Admiral Akana", "ter #acb057 0 0;ter #acb057 3 1;ter #acb057 1 3;ter #fff 12 0 14 -2;ter #fff 1 4;ter #ffffff 11 0 12 4;", "tsn", station8, path="//comms/SB8/Admiral_Akana", title_color="red")
+    shared lf_Evans = lifeform_spawn("Commander Evans", "ter #ffffff 0 0;ter #ffffff 1 1;ter #ffffff 2 2;ter #3D2314 8 0 6 -2;ter #fff 12 0 14 -2;ter #fff 0 7;ter #3D2314 9 0 12 4;", "tsn", station8, path="//comms/internal/Commander_Evans", title_color="red")
+    shared lf_Richards = lifeform_spawn("Commander Richards", "ter #7C0A02 7 1 6  -2;ter #65371e 3 0;ter #65371e 3 2;ter #65371e 4 2;ter #7C0A02 6 2 6 -2;ter #fff 13 0 14 -2;ter #fff 3 5;", "tsn", station8, path="//comms/internal/Commander_Richards", title_color="red")
+    shared lf_Thompson = lifeform_spawn("Commander Thompson", "ter #efe6dd 0 0;ter #efe6dd 0 1;ter #efe6dd 1 3;ter #968b00 6 1 6 -2;ter #fff 12 1 14 -2;ter #fff 2 6;", "tsn", station8, path="//comms/internal/Commander_Thompson", title_color="red")
+
+    ## FRIENDLY NPC WARSHIPS are possible
+    if friendly_value >= 1:
+        shared Ajax_id = await prefab_spawn(prefab_npc_defender, {"START_X": 71000, "START_Y": 0, "START_Z": -71000, "name": "TSN Ajax", "ship_art": "tsn_dreadnought"})
+
+    if friendly_value >= 2:
+        shared Lexington_id = await prefab_spawn(prefab_npc_defender, {"START_X": 64500, "START_Y": 50, "START_Z": 49500, "name": "TSN Lexington", "ship_art": "tsn_heavy_cruiser"})
+
+    if friendly_value >= 3:
+        shared Saratoga_id = await prefab_spawn(prefab_npc_defender, {"START_X": -57000, "START_Y": 600, "START_Z": -58000, "name": "TSN Saratoga", "ship_art": "tsn_heavy_cruiser"})
+
+    if friendly_value >= 4:
+        shared Patton_id = await prefab_spawn(prefab_npc_defender, {"START_X": -66500, "START_Y": -200, "START_Z": 41000, "name": "TSN Patton", "ship_art": "tsn_heavy_cruiser"})
+
+    ## Create the starting bad guys
+    prefab_spawn(prefab_fleet_raider, {"race": "kralien", "fleet_difficulty": DIFFICULTY, "START_X": -37000, "START_Y": 0, "START_Z": -65000})
+    prefab_spawn(prefab_fleet_raider, {"race": "kralien", "fleet_difficulty": DIFFICULTY, "START_X": 61000, "START_Y": 0, "START_Z": 30500})
+    ## more bad guys at higher DIFFICULTY levels
+    if DIFFICULTY >= 6:
+        prefab_spawn(prefab_fleet_raider, {"race": "kralien", "fleet_difficulty": DIFFICULTY, "START_X": -49000, "START_Y": 0, "START_Z": -90000})
+    if DIFFICULTY >= 8:
+        prefab_spawn(prefab_fleet_raider, {"race": "kralien", "fleet_difficulty": DIFFICULTY, "START_X": -74000, "START_Y": 0, "START_Z": 47000})
+    if DIFFICULTY >= 10:
+        prefab_spawn(prefab_fleet_raider, {"race": "kralien", "fleet_difficulty": DIFFICULTY, "START_X": 70000, "START_Y": 0, "START_Z": 62000})
+
+    ## cheat by creating "spy asteroids" to watch the approaching Kraliens (name should be None to avoid notice)
+    shared spya1 = to_object(terrain_spawn(-50000, 4, -70000,None, "#,asteroid,spyingeye", "plain_asteroid_9", "behav_asteroid"))
+    shared spya2 = to_object(terrain_spawn(60500, 4, 43500,None, "#,asteroid,spyingeye", "plain_asteroid_9", "behav_asteroid"))
+
+/*     ## cheat by creating "navigation asteriods" for nearby nebula mapping (name should be None to avoid notice), staggered to avoid pattern
+    shared nava1 = to_object(terrain_spawn(-40000, 4, -46000,None, "#,asteroid,spyingeye", "plain_asteroid_9", "behav_asteroid"))
+    shared nava2 = to_object(terrain_spawn(-30000, 4, -44000,None, "#,asteroid,spyingeye", "plain_asteroid_9", "behav_asteroid"))
+    shared nava3 = to_object(terrain_spawn(-70000, 4, -53000,None, "#,asteroid,spyingeye", "plain_asteroid_9", "behav_asteroid"))
+    shared nava4 = to_object(terrain_spawn(-69000, 4, -43000,None, "#,asteroid,spyingeye", "plain_asteroid_9", "behav_asteroid"))
+    shared nava5 = to_object(terrain_spawn(51000, 4, 53000,None, "#,asteroid,spyingeye", "plain_asteroid_9", "behav_asteroid"))
+    shared nava6 = to_object(terrain_spawn(43000, 4, 64000,None, "#,asteroid,spyingeye", "plain_asteroid_9", "behav_asteroid"))
+    shared nava7 = to_object(terrain_spawn(-56000, 4, 26000,None, "#,asteroid,spyingeye", "plain_asteroid_9", "behav_asteroid"))
+    shared nava8 = to_object(terrain_spawn(-66000, 4, 27000,None, "#,asteroid,spyingeye", "plain_asteroid_9", "behav_asteroid")) */
+
+    ## Move player ship(s) close to SB-8
+    player_list = role("__player__")
+    c = 1
+    for p in player_list:
+        shared pickupship = to_object(p)
+        eo = to_engine_object(p)
+        eo.pos.x = 67000 + (c * 400)
+        eo.pos.y = 0
+        eo.pos.z = -69500 - (c * 400)
+        c+=1
+
+    ## Link sensors to the TSN ships (THIS IS THE WAY!)
+    for p in role("__player__"):
+        if p is not None:
+            player_ship_id = to_id(p)
+            link(player_ship_id, "extra_scan_source", role("tsn"))
+
+    ## Link in the stations
+    for p in role("__player__"):
+        if p is not None:
+            player_ship_id = to_id(p)
+            link(player_ship_id, "extra_scan_source", role("station"))
+
+    ## Link in the spy and nav asteroids
+    for p in role("__player__"):
+        if p is not None:
+            player_ship_id = to_id(p)
+            link(player_ship_id, "extra_scan_source", role("spyingeye"))
+
+    ## Link in the Big Black Hole
+    for p in role("__player__"):
+        if p is not None:
+            player_ship_id = to_id(p)
+            link(player_ship_id, "extra_scan_source", role("bbh"))
+
+    ## Mission variables
+    shared pickup = 0
+    shared Akana = 0
+    shared Evans = 0
+    shared Richards = 0
+    shared Thompson = 0
+    shared reminder = 0
+    shared Skaraandecloak1 = 0
+    shared Skaraanjeer1 = 0
+    shared Richards_comms_update = 0
+    shared Skaraandecloak2 = 0
+    shared Skaraanjeer2 = 0
+    shared Thompson_comms_update = 0
+    shared finalinstructions = 0
+    shared ending = 0
+
+    ## Scheduled tasks
+    await task_schedule(docking_standard_player_station)
+    task_schedule(intro_call)
+    task_schedule(further_info)
+    task_schedule(update_waterfall)
+    task_schedule(first_surprise)
+    task_schedule(first_jeer)
+    task_schedule(second_surprise)
+    task_schedule(second_jeer)
+    task_schedule(final_orders)
+    task_schedule(ending_triggered)
+
+    ## Docking stuff
+    //shared/signal/docked if has_roles(ORIGIN_ID, "__player__")
+    docker = to_object(ORIGIN_ID)
+    print("Docking ship = ", docker.name)
+    docked_at = to_object(SELECTED_ID).name
+    if pickup == 0:
+        if docked_at == "SB-8":
+            await delay_sim(5)
+            pickupship = docker
+            print("Pickup ship = ", pickupship)
+            for p in role("__player__"):
+                if p is not None:
+                    COMMS_SELECTED_ID = lf_Akana
+                    COMMS_ORIGIN_ID = p
+                    m = f"""All three commanders are now aboard your vessel and are eager to depart. It's your discretion about in which order to deliver them. But always be on the watch for enemy ships!"""
+                    comms_receive(m, title="GO TO WORK", title_color="yellow")
+                    sbs.play_audio_file(0, "../missions/Drop_Off/audio/Akana-02", 1.3, 1.0)
+                    sbs.send_story_dialog(0, "GO TO WORK", m, get_face(lf_Akana), "#444")
+            ## Add Nav Points for the drop off stations, so the players don't get lost
+            nav_id_DS99 = sim.add_navpoint(-60000, 201, -63000, "DS-99", "#008000")
+            nav_id_DS101 = sim.add_navpoint(61000, 51, 52000, "DS-101", "#008000")
+            nav_id_DS106 = sim.add_navpoint(-67000, -199, 37000, "DS-106", "#008000")
+            ## Move all the Commanders to first ship to dock with SB-8
+            lifeform_transfer(lf_Evans, pickupship)
+            lifeform_transfer(lf_Richards, pickupship)
+            lifeform_transfer(lf_Thompson, pickupship)
+            players = all_roles('__player__, tsn')
+            update_Evans = to_object(lf_Evans.host).name
+            update_Richards = to_object(lf_Richards.host).name
+            update_Thompson = to_object(lf_Thompson.host).name
+            comms_broadcast(players, f"""Current Cmdr Locations:""")
+            comms_broadcast(players, f"""Cmdr Evans on {update_Evans}""")
+            comms_broadcast(players, f"""Cmdr Richards on {update_Richards}""")
+            comms_broadcast(players, f"""Cmdr Thompson on {update_Thompson}""")
+            pickup = 1
+
+    //shared/signal/docked if has_roles(ORIGIN_ID, "__player__")
+    docker = to_object(ORIGIN_ID)
+    print("Docking ship = ", docker.name)
+    docked_at = to_object(SELECTED_ID).name
+    if pickup == 1 and Evans == 0 and docker.id == pickupship.id:
+        if docked_at == "DS-99":
+            await delay_sim(3)
+            print("Drop Off ship = ", docker.name)
+            for p in role("__player__"):
+                if p is not None:
+                    COMMS_SELECTED_ID = station99
+                    COMMS_ORIGIN_ID = p
+                    m = f"""Thank you, Commander Evans is now aboard our station."""
+                    comms_receive(m, title="GOOD WORK", title_color="yellow")
+                    sbs.play_audio_file(0, "../missions/Drop_Off/audio/DS-99-01", 1.3, 1.0)
+                    sbs.send_story_dialog(0, "GOOD WORK", m, get_face(station99), "#444")
+            ## Move Evans aboard his station
+            lifeform_transfer(lf_Evans, station99)
+            players = all_roles('__player__, tsn')
+            update_Evans = to_object(lf_Evans.host).name
+            update_Richards = to_object(lf_Richards.host).name
+            update_Thompson = to_object(lf_Thompson.host).name
+            comms_broadcast(players, f"""Current Cmdr Locations:""")
+            comms_broadcast(players, f"""Cmdr Evans on {update_Evans}""")
+            comms_broadcast(players, f"""Cmdr Richards on {update_Richards}""")
+            comms_broadcast(players, f"""Cmdr Thompson on {update_Thompson}""")
+            Evans = 1
+
+    //shared/signal/docked if has_roles(ORIGIN_ID, "__player__")
+    docker = to_object(ORIGIN_ID)
+    print("Docking ship = ", docker.name)
+    docked_at = to_object(SELECTED_ID).name
+    if pickup == 1 and Richards == 0 and docker.id == pickupship.id:
+        if docked_at == "DS-106":
+            await delay_sim(3)
+            print("Drop Off ship = ", docker.name)
+            for p in role("__player__"):
+                if p is not None:
+                    COMMS_SELECTED_ID = station106
+                    COMMS_ORIGIN_ID = p
+                    m = f"""Commander Richards sends her thanks for delivering her safely."""
+                    comms_receive(m, title="GRATITUDE", title_color="yellow")
+                    sbs.play_audio_file(0, "../missions/Drop_Off/audio/DS-106-01", 1.3, 1.0)
+                    sbs.send_story_dialog(0, "GRATITUDE", m, get_face(station106), "#444")
+            ## Move Richards aboard her station
+            lifeform_transfer(lf_Richards, station106)
+            players = all_roles('__player__, tsn')
+            update_Evans = to_object(lf_Evans.host).name
+            update_Richards = to_object(lf_Richards.host).name
+            update_Thompson = to_object(lf_Thompson.host).name
+            comms_broadcast(players, f"""Current Cmdr Locations:""")
+            comms_broadcast(players, f"""Cmdr Evans on {update_Evans}""")
+            comms_broadcast(players, f"""Cmdr Richards on {update_Richards}""")
+            comms_broadcast(players, f"""Cmdr Thompson on {update_Thompson}""")
+            Richards = 1
+
+    //shared/signal/docked if has_roles(ORIGIN_ID, "__player__")
+    docker = to_object(ORIGIN_ID)
+    print("Docking ship = ", docker.name)
+    docked_at = to_object(SELECTED_ID).name
+    if pickup == 1 and Thompson == 0 and docker.id == pickupship.id:
+        if docked_at == "DS-101":
+            await delay_sim(3)
+            print("Drop Off ship = ", docker.name)
+            for p in role("__player__"):
+                if p is not None:
+                    COMMS_SELECTED_ID = station101
+                    COMMS_ORIGIN_ID = p
+                    m = f"""Commander Thompson has assumed command of the station, but hopes that next time you'll do a better job of transporting him safely..."""
+                    comms_receive(m, title="STATUS UPDATE", title_color="yellow")
+                    sbs.play_audio_file(0, "../missions/Drop_Off/audio/DS-101-01", 1.3, 1.0)
+                    sbs.send_story_dialog(0, "STATUS UPDATE", m, get_face(station101), "#444")
+            lifeform_transfer(lf_Thompson, station101)
+            players = all_roles('__player__, tsn')
+            update_Evans = to_object(lf_Evans.host).name
+            update_Richards = to_object(lf_Richards.host).name
+            update_Thompson = to_object(lf_Thompson.host).name
+            comms_broadcast(players, f"""Current Cmdr Locations:""")
+            comms_broadcast(players, f"""Cmdr Evans on {update_Evans}""")
+            comms_broadcast(players, f"""Cmdr Richards on {update_Richards}""")
+            comms_broadcast(players, f"""Cmdr Thompson on {update_Thompson}""")
+            Thompson = 1
+
+
+    ## Update the Science scan info for Gaia BH3 (weirdly this block of code needs a double-Return at the end to work, not sure why)
+    //enable/science if has_roles(SCIENCE_SELECTED_ID, "bbh")
+    //science if has_roles(SCIENCE_SELECTED_ID, "bbh") 
+    + "scan":
+        <scan>
+            % Gaia BH3 is a VERY dangerous black hole. It has a mass approximately 33 times the mass of the Earth's Sun. It is currently drawing in super-heated gas, creating a bright accretion disc that is detectable from a vast distance.
+
+
+    ## Comms stuff
+    //enable/comms if has_roles(COMMS_SELECTED_ID, '__PLAYER__') and (COMMS_SELECTED_ID == COMMS_ORIGIN_ID)
+        lifeform_transfer(lf_Akana, to_id(lf_Akana.host))
+        lifeform_transfer(lf_Evans, to_id(lf_Evans.host))
+        lifeform_transfer(lf_Richards, to_id(lf_Richards.host))
+        lifeform_transfer(lf_Thompson, to_id(lf_Thompson.host))
+
+
+    //comms/SB8/Admiral_Akana
+    + "Back" //comms
+    + "Our Orders":
+        with comms_override(COMMS_ORIGIN_ID, COMMS_LIFEFORM_ID):
+            << "Orders"
+                % You know what to do!
+                % Get to work!
+                % Do I have to hold your hand?
+
+
+    //comms/internal/Commander_Evans
+    + "Back" //comms
+    + "Base Situation":
+        with comms_override(COMMS_ORIGIN_ID, COMMS_LIFEFORM_ID):
+            << "About my base"
+                % It's very nice.
+                % You might be surprised to learn that we have a lot of musicians on DS-99!
+                % It's busy this time of year.
+    +"How are your quarters?" if pickup == 1 and Evans == 0:
+        with comms_override(COMMS_ORIGIN_ID, COMMS_LIFEFORM_ID):
+            << "My quarters aboard your ship"
+                % They are very nice, thank you.
+                % Quite comfortable!
+                % Your hospitality is just too generous!
+
+
+    //comms/internal/Commander_Richards
+    + "Back" //comms
+    + "Base Situation":
+        with comms_override(COMMS_ORIGIN_ID, COMMS_LIFEFORM_ID):
+            << "About my base"
+                % We're far out on our own in the boonies.
+                % It's quiet. Too quiet!
+                % I'm woried about it, honestly.
+    +"How are your quarters?" if pickup == 1 and Richards == 0:
+        with comms_override(COMMS_ORIGIN_ID, COMMS_LIFEFORM_ID):
+            << "My quarters aboard your ship"
+                % Better than my quarters aboard DS-106!
+                % Luxurious!
+                % Great, and everyone aboard has been so friendly!
+    +"Why do the Skaraans want you?" if Richards_comms_update == 1:
+        with comms_override(COMMS_ORIGIN_ID, COMMS_LIFEFORM_ID):
+            << "The Skaraans"
+                % Sigh, it's a long story.
+                % That jerk never gives up!
+                % Basically, this Skaraan captain fell in love with me early in my career and has been stalking me ever since!
+                % I was on an undercover mission on Epsilon Ceti B-3 when I caught the eye of a partiularly infamous Skaraan.
+
+
+    //comms/internal/Commander_Thompson
+    + "Back" //comms
+    + "Base Situation":
+        with comms_override(COMMS_ORIGIN_ID, COMMS_LIFEFORM_ID):
+            << "About my base"
+                % I hate it!
+                % It's a craphole!
+                % Why do you care?
+    +"How are your quarters?" if pickup == 1 and Thompson == 0:
+        with comms_override(COMMS_ORIGIN_ID, COMMS_LIFEFORM_ID):
+            << "My quarters aboard your ship"
+                % Tiny and cramped.
+                % They are unacceptable, but would it do any good to complain?
+                % Just get me to DS-101 so I can get off this rust bucket.
+    +"Why do the Skaraans want you?" if Thompson_comms_update == 1:
+        with comms_override(COMMS_ORIGIN_ID, COMMS_LIFEFORM_ID):
+            << "The Skaraans"
+                % You better keep those bastards away from me!
+                % I bested one of their War Corporation fleets and they've never let it go!
+                % Ha! They're just envious that they didn't think of using a mine with a cloaking field.
+
+
+
+    ## Start the game
+    //signal/game_started 
+    await delay_sim(1)
+    gui_reroute_server(start_screen)
+    gui_reroute_server(logo_screen)
+
+
+    ## Enforce black hole deaths
+    //damage/internal if has_role(DAMAGE_ORIGIN_ID, "__player__") and EVENT.sub_tag == "maelstrom"
+    explode_player_ship(DAMAGE_ORIGIN_ID)
+
+
+    ## This handles when a player ships is destroyed
+    ## The default is to truly delete it
+    //shared/signal/player_ship_destroyed
+    print("story: Exploded Deleting player_ship")
+    yield success if get_shared_inventory_value("GAME_ENDED", False)
+
+    so = to_object(DESTROYED_ID)
+    if so is not None:
+        <all>
+        % {so.name} has perished
+        % {so.name} has blown up
+        % lost contact with {so.name} 
+
+    so = to_object(DESTROYED_ID)
+    if so is not None:
+        sbs.delete_object(DESTROYED_ID)
+
+    await delay_sim(1)
+
+
+====== start_screen ======
+    sbs.suppress_client_connect_dialog(0)
+    gui_section("area:0,0,100,100")
+    gui_layout_widget("3dview")
+    gui_section("area:20,40,80,80")
+    gui_text_area("$t Drop Off Mission\n\nversion: 1.2.8\nby: Jim Gillispie\n\nconcept: Andre Odendaal\n\nvoices: Robert Gally, Jim Gillispie, Shea Standefer, and Jameson Utrilla", "background:#0006")
+    await gui(timeout=delay_sim(7))
+
+    gui_reroute_server(show_main_game_screen)
+    sbs.suppress_client_connect_dialog(1)
+    ->END
+
+
+====== logo_screen ======
+    await delay_sim(9)
+    sbs.suppress_client_connect_dialog(0)
+    gui_section("area:0,0,100,100")
+    gui_layout_widget("3dview")
+
+    ##tweaked to work pretty well at 1920x1080, but will be somewhat stretched at other resolutions
+    gui_section("area:25,20,75,80")
+    gui_image_stretch("data/missions/Drop_Off/Drop_Off_logo1")
+    await gui(timeout=delay_sim(7))
+
+    gui_reroute_server(show_main_game_screen)
+    sbs.suppress_client_connect_dialog(1)
+    ->END
+
+
+====== intro_call =======
+    await delay_sim(19)
+    
+    if not object_exists(station8):
+        print(f"Starbase 8 has been destroyed!")
+        ->END
+
+    if pickup == 1:
+        ->END
+
+    if pickup == 0 and Akana == 1:
+        for p in role("__player__"):
+            if p is not None:
+                COMMS_SELECTED_ID = station8
+                COMMS_ORIGIN_ID = p
+                comms_receive(f"""Your orders are to dock with us and collect the three base commanders who've been attending a conference here, and then drop them off at their three respective bases located elsewhere in this sector.""", title="ORDERS", title_color="yellow")
+
+    if pickup == 0 and Akana == 0:
+        m = f"""This is Admiral Akana at Starbase 8 here. Your orders are to dock with us and collect the three base commanders who've been attending a conference here, and then drop them off at their three respective bases located elsewhere in this sector."""
+        for p in role("__player__"):
+            if p is not None:
+                COMMS_SELECTED_ID = lf_Akana
+                COMMS_ORIGIN_ID = p
+                m = f"""This is Admiral Akana at Starbase 8 here. Your orders are to dock with us and collect the three base commanders who've been attending a conference here, and then drop them off at their three respective bases located elsewhere in this sector."""
+                comms_receive(m, title="ORDERS", title_color="yellow")
+                sbs.play_audio_file(0, "../missions/Drop_Off/audio/Akana-01", 1.3, 1.0)
+                sbs.send_story_dialog(0, "ORDERS", m, get_face(lf_Akana), "#444")
+        Akana = 1
+
+    await delay_sim(90)
+    jump intro_call
+
+
+====== further_info =======
+    await delay_sim(10)
+    
+    if not object_exists(station8):
+        print(f"Starbase 8 has been destroyed!")
+        ->END
+
+    if reminder == 1:
+        ->END
+
+    if pickup == 1 and reminder == 0:
+        await delay_sim(75)
+        for p in role("__player__"):
+            if p is not None:
+                COMMS_SELECTED_ID = lf_Akana
+                COMMS_ORIGIN_ID = p
+                m = f"""Cmdr Evans is going to DS-99, Cmdr Thompson runs DS-101, and Cmdr Richards calls DS-106 home. Just remember: we can't afford to lose *ANY* stations in this sector, whether their commanders are on them or not. Always prioritize base protection!"""
+                comms_receive(m, title="REMINDER", title_color="yellow")
+                sbs.play_audio_file(0, "../missions/Drop_Off/audio/Akana-03", 1.3, 1.0)
+                sbs.send_story_dialog(0, "REMINDER", m, get_face(lf_Akana), "#444")
+        reminder = 1
+
+    await delay_sim(10)
+    jump further_info
+
+
+====== update_waterfall =======
+    await delay_sim(90)
+    
+    players = all_roles('__player__, tsn')
+    update_Evans = to_object(lf_Evans.host).name
+    update_Richards = to_object(lf_Richards.host).name
+    update_Thompson = to_object(lf_Thompson.host).name
+    comms_broadcast(players, f"""Current Cmdr Locations:""")
+    comms_broadcast(players, f"""Cmdr Evans on {update_Evans}""")
+    comms_broadcast(players, f"""Cmdr Richards on {update_Richards}""")
+    comms_broadcast(players, f"""Cmdr Thompson on {update_Thompson}""")
+
+    await delay_sim(90)
+    jump update_waterfall
+
+
+====== first_surprise =======
+    await delay_sim(2)
+
+    if pickup == 0:
+        jump first_surprise
+
+    if Skaraandecloak1 == 0:
+        for p in role("__player__"):
+            #eo = to_engine_object(p)
+            #print(f"Player Position: {int(eo.pos.x)}, {int(eo.pos.y)}, {int(eo.pos.z)}")
+            distance106 = sbs.distance_id(pickupship.id, station106.id)
+            #print("Distance to 106 = ", distance106)
+            if distance106 <= 30000:
+                Skaraandecloak1 = 1
+        await delay_sim(2)
+        jump first_surprise
+
+    ## Skaraans "de-cloak" near DS-106 when players get near the station, but only with commanders!
+    if Skaraandecloak1 == 1:
+        Skaraanjeer1 = 1
+        players = all_roles('__player__, tsn')
+        shared skaraans01 = await prefab_spawn(prefab_fleet_raider, {"race": "skaraan", "fleet_difficulty": DIFFICULTY, "START_X": -60000, "START_Y": -200, "START_Z": 44000})
+        shared skaraans02 = await prefab_spawn(prefab_fleet_raider, {"race": "skaraan", "fleet_difficulty": DIFFICULTY, "START_X": -62000, "START_Y": -200, "START_Z": 42000})
+        if DIFFICULTY >= 6:
+            shared skaraans11 = await prefab_spawn(prefab_fleet_raider, {"race": "skaraan", "fleet_difficulty": DIFFICULTY, "START_X": -66000, "START_Y": -200, "START_Z": 45000})
+        skaraans02list = linked_to(skaraans02, "ship_list")
+        for baddie in skaraans02list:
+            shared skaraan02a = to_object(baddie)
+        set_face(skaraan02a.id, "ska #fff 0 0;ska #fff 0 3;ska #fff 1 4;ska #fff 1 1;")
+        comms_broadcast(players, "HOSTILE SHIPS DE-CLOAKING NEAR DS-106", "red")
+        for p in role("__player__"):
+            if p is not None:
+                COMMS_SELECTED_ID = station106
+                COMMS_ORIGIN_ID = p
+                m = f"""MAYDAY! HOSTILE SHIPS HAVE DE-CLOAKED NEARBY! PLEASE HELP!"""
+                comms_receive(m, title="ALERT", title_color="red")
+                sbs.play_audio_file(0, "../missions/Drop_Off/audio/DS-106-02", 1.3, 1.0)
+                sbs.send_story_dialog(0, "ALERT", m, get_face(station106), "#444")
+        ->END
+
+
+====== first_jeer =======
+    await delay_sim(2)
+
+    if Skaraanjeer1 == 0:
+        jump first_jeer
+
+    if Skaraanjeer1 == 1:
+        await delay_sim(23)
+        for p in role("__player__"):
+            if p is not None:
+                COMMS_SELECTED_ID = skaraan02a
+                COMMS_ORIGIN_ID = p
+                m = f"""Attention, Terrans! Surrender the one you call Commander Richards. Our captain finds her comely and wishes to claim her as a war-concubine. Failure to comply will result in the destruction of your vessel and your base."""
+                comms_receive(m, title="NOTARIZED STATEMENT OF WARLIKE INTENT", title_color="red")
+                sbs.play_audio_file(0, "../missions/Drop_Off/audio/Skaraan-01", 1.3, 1.0)
+                sbs.send_story_dialog(0, "NOTARIZED STATEMENT OF WARLIKE INTENT", m, get_face(skaraan02a), "#444")
+        Richards_comms_update = 1
+        ->END
+
+
+====== second_surprise =======
+    await delay_sim(2)
+
+    if pickup == 0:
+        jump second_surprise
+
+    if Skaraandecloak2 == 0:
+        for p in role("__player__"):
+            #eo = to_engine_object(p)
+            #print(f"Player Position: {int(eo.pos.x)}, {int(eo.pos.y)}, {int(eo.pos.z)}")
+            distance101 = sbs.distance_id(pickupship.id, station101.id)
+            #print("Distance to 101 = ", distance101)
+            if distance101 <= 15000:
+                Skaraandecloak2 = 1
+        await delay_sim(2)
+        jump second_surprise
+
+    ## Skaraans "de-cloak" near DS-101 when players get near the station, but only with commanders!
+    if Skaraandecloak2 == 1:
+        Skaraanjeer2 = 1
+        players = all_roles('__player__, tsn')
+        shared skaraans03 = await prefab_spawn(prefab_fleet_raider, {"race": "skaraan", "fleet_difficulty": DIFFICULTY, "START_X": 55000, "START_Y": 100, "START_Z": 52200})
+        shared skaraans04 = await prefab_spawn(prefab_fleet_raider, {"race": "skaraan", "fleet_difficulty": DIFFICULTY, "START_X": 54000, "START_Y": 100, "START_Z": 52000})
+        if DIFFICULTY >= 6:
+            shared skaraans12 = await prefab_spawn(prefab_fleet_raider, {"race": "skaraan", "fleet_difficulty": DIFFICULTY, "START_X": 56000, "START_Y": 100, "START_Z": 54000})
+        skaraans03list = linked_to(skaraans03, "ship_list")
+        for baddie in skaraans03list:
+            shared skaraan03a = to_object(baddie)
+        set_face(skaraan03a.id, "ska #fff 0 0;ska #fff 0 2;ska #fff 2 1;ska #fff 1 0;")
+        comms_broadcast(players, "HOSTILE SHIPS DE-CLOAKING NEAR DS-101", "red")
+        for p in role("__player__"):
+            if p is not None:
+                COMMS_SELECTED_ID = station101
+                COMMS_ORIGIN_ID = p
+                comms_receive(f"""Just great, more enemy ships! We could really use some help here at DS-101!""", title="ALERT", title_color="red")
+                sbs.play_audio_file(0, "../missions/Drop_Off/audio/DS-101-02", 1.3, 1.0)
+        ->END
+
+
+====== second_jeer =======
+    await delay_sim(2)
+
+    if Skaraanjeer2 == 0:
+        jump second_jeer
+
+    if Skaraanjeer2 == 1:
+        await delay_sim(23)
+        for p in role("__player__"):
+            if p is not None:
+                COMMS_SELECTED_ID = skaraan03a
+                COMMS_ORIGIN_ID = p
+                m = f"""We are here for the life of this so-called 'Commander Thompson'. He is wanted for using disreputable war tactics against our species. Anyone who stands in the way of our revenge will be obliterated! This is your only warning."""
+                comms_receive(m, title="NOTARIZED STATEMENT OF WARLIKE INTENT", title_color="red")
+                sbs.play_audio_file(0, "../missions/Drop_Off/audio/Skaraan-02", 1.3, 1.0)
+                sbs.send_story_dialog(0, "NOTARIZED STATEMENT OF WARLIKE INTENT", m, get_face(skaraan03a), "#444")
+        Thompson_comms_update = 1
+        ->END
+
+
+====== final_orders =======
+    await delay_sim(21)
+
+    ## Count the enemies left
+    left = role("raider")
+    c = len(left)
+
+    if finalinstructions == 0 and ending == 1:
+        await delay_sim(23)
+        for p in role("__player__"):
+            if p is not None:
+                COMMS_SELECTED_ID = lf_Akana
+                COMMS_ORIGIN_ID = p
+                m = f"""Good work dropping off the commanders! Now just mop up any remaining hostiles in the sector and you can call it a day!"""
+                comms_receive(m, title="MORE ORDERS", title_color="yellow")
+                sbs.play_audio_file(0, "../missions/Drop_Off/audio/Akana-04", 1.3, 1.0)
+                sbs.send_story_dialog(0, "MORE ORDERS", m, get_face(lf_Akana), "#444")
+        finalinstructions = 1
+        ->END
+
+    await delay_sim(21)
+    jump final_orders
+
+
+====== ending_triggered =======
+    await delay_sim(10)
+
+    ## Count the enemies left
+    left = role("raider")
+    c = len(left)
+
+    ## Count the players left
+    playersships = role('__player__')
+
+    ## See if all the commanders have been delivered
+    if Evans == 1 and Richards == 1 and Thompson == 1:
+        ending = 1
+
+    ## End if the player ship carrying the commanders is destroyed
+    if not object_exists(pickupship) and pickup == 1 and ending == 0:
+        remove_role(left, "raider")
+        START_TEXT = "Mission Failure!  Your ship carrying the commanders was destroyed!"
+        GAME_STARTED = False
+        GAME_ENDED = True
+        sbs.play_music_file(0, "music/default/failure")
+        signal_emit("show_game_results", None)
+        ->END
+
+    ## End if all the player ships are destroyed
+    if len(playersships)==0:
+        START_TEXT = "Mission Failure!  All the player ships have been destroyed!"
+        GAME_STARTED = False
+        GAME_ENDED = True
+        sbs.play_music_file(0, "music/default/failure")
+        signal_emit("show_game_results", None)
+        ->END
+
+    ## End if any base is destroyed
+    if not object_exists(station8):
+        remove_role(left, "raider")
+        START_TEXT = "Mission Failure!  Starbase 8 was destroyed!"
+        GAME_STARTED = False
+        GAME_ENDED = True
+        sbs.play_music_file(0, "music/default/failure")
+        signal_emit("show_game_results", None)
+        ->END
+
+    if not object_exists(station99):
+        remove_role(left, "raider")
+        START_TEXT = "Mission Failure!  Deep Space 99 was destroyed!"
+        GAME_STARTED = False
+        GAME_ENDED = True
+        sbs.play_music_file(0, "music/default/failure")
+        signal_emit("show_game_results", None)
+        ->END
+
+    if not object_exists(station101):
+        remove_role(left, "raider")
+        START_TEXT = "Mission Failure!  Deep Space 101 was destroyed!"
+        GAME_STARTED = False
+        GAME_ENDED = True
+        sbs.play_music_file(0, "music/default/failure")
+        signal_emit("show_game_results", None)
+        ->END
+
+    if not object_exists(station106):
+        remove_role(left, "raider")
+        START_TEXT = "Mission Failure!  Deep Space 106 was destroyed!"
+        GAME_STARTED = False
+        GAME_ENDED = True
+        sbs.play_music_file(0, "music/default/failure")
+        signal_emit("show_game_results", None)
+        ->END
+
+    ## Time has run out
+    if is_timer_set(SHARED, "time_limit") and is_timer_finished(SHARED, "time_limit"):
+        # End attack
+        remove_role(left, "raider")
+        START_TEXT = "Mission time has run out!"
+        GAME_STARTED = False
+        GAME_ENDED = True
+        sbs.play_music_file(0, "music/default/failure")
+        signal_emit("show_game_results", None)
+        ->END
+
+    ## Victory by dropping off all commanders and eliminating all enemies
+    if ending == 1 and c == 0:
+        await delay_sim(5)
+        START_TEXT = "Mission Success!  The commanders have been returned and all enemies are defeated!"
+        GAME_STARTED = False
+        GAME_ENDED = True
+        sbs.play_music_file(0, "music/default/victory")
+        signal_emit("show_game_results", None)
+        ->END
+
+    await delay_sim(10)
+    jump ending_triggered

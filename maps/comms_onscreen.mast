@@ -1,0 +1,326 @@
+
+# Determine areas for gui elements
+# These are shared by all clients and server, since it should be the same for everyone
+# shared section_area = buildArea(500, 370, 225, 50)
+# shared button_area = buildArea(0,0,340,40)
+# shared testing = True
+# button_area.set_relative_to(section_area)
+# //enable/comms
+# //comms if has_roles(COMMS_ORIGIN_ID, "__player__") and get_inventory_value(COMMS_ORIGIN_ID, "incoming_comms_button", False)
+#     # +"hi there"
+# #     if COMMS_SELECTED_ID == 0:
+#     from_id = get_inventory_value(COMMS_ORIGIN_ID, "incoming_comms_button", False)
+#     if not from_id:
+#         yield fail
+#     from_obj = to_object(from_id)
+#     name = from_obj.name
+#     + [yellow,white]"Incoming Comms from {name}":
+#         jump play_incoming_message {"ship": COMMS_ORIGIN_ID}
+
+
+
+# //comms/FTL if has_inventory_value(COMMS_ORIGIN_ID,"incoming_comms_button")
+#     +"INCOMING COMMS":
+#         task_schedule(play_incoming_message,{"ship": COMMS_ORIGIN_ID})
+
+
+#region gui comms changes
+# //gui/normal_comm
+#     comms_broadcast(client_id,"Testing comms gui")
+#     # gotta get the ship applicable to this client
+#     ship = sbs.get_ship_of_client(client_id)
+    
+#     # This is the section that contains the Incoming Comms button
+#     # ship_sec = gui_region(style="area: 500px,370px,725px,415px")
+#     ship_sec = gui_region(style=section_area.as_style())
+    
+    
+#     default tab = 1
+    # Then we trigger a check when this value changes. If it's not None, then we show the button and update its contents
+    
+
+
+    # on change get_inventory_value(ship,"incoming_comms_button"):
+        
+    #     # with gui_info_panel_add("incoming_comms", 34, gui_panel_console_message, None):
+    #     #     btn = gui_button("Hello there", "color: #ffe600;")
+    #     #     gui_show(btn)
+    #     #     on gui_message(btn):
+    #     #         comms_broadcast(0, "Button pressed")
+        
+    #     from_id = get_inventory_value(ship,"incoming_comms_button")
+    #     if from_id is None:
+    #         yield fail
+    #     # incoming_message_button = gui_button("Incoming Comms Message!",style="color: #ffe600; tag:incoming_comms;"+button_area.as_style())
+
+    #     # choice = gui_info_panel_send_message(client_id, message="Incoming Comms", button="Incoming Comms Button", icon_index=105)
+    #     n = to_object(from_id).name
+    #     if n is None:
+    #         n = "unkown source"
+    #     press = await comms_story_buttons(ship, any_role("__player__, __npc__"), ["Incoming Message from " + n], "//comms")
+    #     # press = await choice
+    #     # doesn't really matter what the data is, the button was pressed, that's all I care about
+    #     # sel = press.data.get("COMMS_SELECTED_ID")
+    #     # lf = press.data.get("COMMS_LIFEFORM_ID")
+
+    #     task_schedule(play_incoming_message, {"ship": ship})
+    #     # if from_id is not None:
+    #     #     comms_button = "Incoming Comms from {to_object(from_id).name}"
+    #     #     gui_update("incoming_comms","$text: {comms_button};")
+    #     #     gui_show(ship_sec)
+    #         # gui_info_panel_send_message()
+    # # Now we setup the actual button
+    # # with ship_sec:
+    # #     # incoming_message_button = gui_button("Incoming Comms Message!",style="color: #ffe600; tag:incoming_comms;area: 10px,65px,350px,100px; $text: Incoming Comms")
+    # #     incoming_message_button = gui_button("Incoming Comms Message!",style="color: #ffe600; tag:incoming_comms;"+button_area.as_style())
+    # #     comms_broadcast(0,"Button built")
+    # #     # TODO: Why doesn't gui_click work in this context?
+    # #     # on gui_click(incoming_message_button):
+    # #     on gui_message(incoming_message_button):
+    # #         task_schedule(play_incoming_message, {"ship":ship})
+    #     # region old comms send message section
+    #         # comms_broadcast(0,"Message1")
+            
+    #         # from_id = get_inventory_value(ship,"incoming_comms_button",None)
+    #         # m = get_inventory_value(from_id, "comms_message", "Message not found")
+            
+    #         # if from_id is not None:
+    #         #     audio_file = get_inventory_value(from_id,"audio_file")
+    #         #     # Can only play an audio file if it exists
+    #         #     if audio_file is not None:
+    #         #         audio_volume = get_inventory_value(from_id,"audio_volume")
+    #         #         audio_pitch = get_inventory_value(from_id,"audio_pitch")
+    #         #         comms_broadcast(0,"Playing audio file...")
+    #         #         audio_file = getFullPath(mission_dir,audio_file)
+
+    #         #         clientList = sbs.get_client_ID_list()
+    #         #         # Iterate over all clients, they should all recieve the audio
+    #         #         for c in clientList:
+    #         #             if sbs.get_ship_of_client(c) == ship:
+    #         #                 file = get_mission_audio_file("audio/Akana-01") # returns ""..\missions\Drop_Off/audio/akana-01"
+    #         #                 sbs.play_audio_file(c,file,audio_volume,audio_pitch) # HERE
+                    
+    #         #         mainscreens = gui_console_clients("mainscreen")
+    #         #         # Now iterate over all the mainscreens. They should also get the audio file
+    #         #         for c in mainscreens:
+    #         #             if sbs.get_ship_of_client(c):
+    #         #                 sbs.play_audio_file(c,file,audio_volume,audio_pitch)
+    #         #                 sbs.send_story_dialog(c, "Incoming Comms Message",m,get_face(from_id)," #ffe600")
+    #         # endregion
+    #     set_inventory_value(ship,"incoming_comms_button",None)
+    #     # comms_broadcast(0,"Hiding button1, showing button2")
+    #     comms_broadcast(0,"{ship}")
+    #     set_inventory_value(ship,"mainscreen_face",from_id)
+    #     gui_hide(ship_sec)
+    #     if ship_sec2 is not None:
+    #         gui_show(ship_sec2)
+    #     with comms_override(from_id,ship):
+    #         format = get_inventory_value(from_id,"comms_message_format","red")
+    #         title = get_inventory_value(from_id,'comms_message_title','Message Recieved')
+    #         title_format = get_inventory_value(from_id,"comms_title_format")
+    #         message = get_inventory_value(from_id,"comms_message","...")
+    #         face = faces.get_face(from_id)
+    #         title_color = get_inventory_value(from_id,"comms_title_format")
+    #         comms_message(message, from_id, ship, title, face, format, title_color)
+    #         # <<[red,format] "{}"
+    #         # # TODO: Figure out a way to allow for using multiple choices
+    #         # % {message}
+
+
+    # # First we need to check if the button should be there when opening the console
+    # initial_check = get_inventory_value(ship,"incoming_comms_button")
+    # if initial_check is None:
+    #     gui_hide(ship_sec)
+    # else:
+    #     comms_broadcast(0,"UPdating initial check")
+    #     comms_button = "Incoming Comms from {to_object(initial_check).name}"
+    #     gui_update("incoming_comms","$text: {comms_button}")
+    #     gui_show(ship_sec)
+
+    # #### Set up End Comms button
+    # # This section contains the End Comms button
+    
+    # # ship_sec2 = gui_region(style="area: 500px,370px,725px,415px")
+    # ship_sec2 = gui_region(style=section_area.as_style())
+    # with ship_sec2:
+    #     # end_comms_button = gui_button("End Communications",style="area: 10px,65px,350px,100px")
+    #     end_comms_button = gui_button("End Communications",style=button_area.as_style())
+    #     on gui_message(end_comms_button):
+    #         gui_hide(ship_sec2)
+    #         set_inventory_value(ship,"mainscreen_face",None)
+    #         comms_broadcast(0,"Mainscreen face set")
+
+    # # When the client joins on a conosle, check if the close comms button should appear
+    # initial_check = get_inventory_value(ship,"mainscreen_face")
+    # if initial_check is not None:
+    #     gui_show(ship_sec2)
+    # else:
+    #     gui_hide(ship_sec2)
+    # yield idle
+#endregion
+
+# Add the face to the mainscreen, but only when the message is playing.
+# //gui/normal_main
+#     ship = sbs.get_ship_of_client(client_id)
+#     area = calcArea(10,370,200,200)
+#     comms_broadcast(0,"{ship}")
+#     # mainscreen_face = gui_region(style=area+"color: #000000;")
+#     # s = gui_region(style=area)
+
+#     # with s:
+#     #     gui_button("Helpme!")
+
+#     ### Check if the face should be visible on client connection
+#     # initial_check = get_inventory_value(ship, "mainscreen_face")
+#     # comms_broadcast(0,"{initial_check}")
+#     # if initial_check is not None:
+#     #     comms_broadcast(0,"Showing face")
+#     #     gui_show(mainscreen_face)
+#     # else:
+#     #     comms_broadcast(0,"Hiding face")
+#     #     gui_hide(mainscreen_face)
+
+#     ### When the face changes, we check if it should be visible or not.
+#     on change get_inventory_value(ship,"mainscreen_face"):
+#         newFace = get_inventory_value(ship,"mainscreen_face")
+#         comms_broadcast(0,"mainscreen face changed")
+        
+#         # if newFace is not None:
+#         #     # TODO: Update the face
+#         #     gui_show(mainscreen_face)
+#         # else:
+#         #     gui_hide(mainscreen_face)
+
+#     yield idle
+
+
+== play_incoming_message
+" Play the message when the button is pressed on the applicable ship
+metadata: ```
+ship:
+```
+    from_id = get_inventory_value(ship,"incoming_comms_button",None)
+    n = to_object(from_id).name
+    if n is None:
+        n = "unkown source"
+    press = await comms_story_buttons(ship, any_role("__player__, __npc__"), ["Incoming Message from " + n], "//comms")
+
+    # if ship is None:
+    #     comms_broadcast(0, "SHIP IS NONE")
+    #     ->END
+    # comms_broadcast(0,"Message1")
+    
+    # reset incoming_comms_button key since we already got from_id from it
+    set_inventory_value(ship,"incoming_comms_button",None)
+    
+    if from_id is not None:
+        
+        # region get the inventory info
+        format = get_inventory_value(from_id,"comms_message_format","red")
+        title = get_inventory_value(from_id,'comms_message_title','Message Recieved')
+        title_format = get_inventory_value(from_id,"comms_title_format")
+        message = get_inventory_value(from_id,"comms_message","...")
+        face = get_face(from_id)
+        title_color = get_inventory_value(from_id,"comms_title_format")
+        audio_file = get_inventory_value(from_id,"audio_file")
+        # endregion
+
+        # Can only play an audio file if it exists
+        if audio_file is not None:
+            audio_volume = get_inventory_value(from_id,"audio_volume")
+            audio_pitch = get_inventory_value(from_id,"audio_pitch")
+            audio_file = getFullPath(mission_dir,audio_file)
+
+            clientList = sbs.get_client_ID_list()
+            # Iterate over all clients, they should all recieve the audio
+            for c in clientList:
+                if sbs.get_ship_of_client(c) == ship:
+                    file = get_mission_audio_file("audio/Akana-01") # returns ""..\missions\Drop_Off/audio/akana-01"
+                    sbs.play_audio_file(c,file,audio_volume,audio_pitch) # HERE
+            
+            mainscreens = gui_console_clients("mainscreen")
+            # Now iterate over all the mainscreens. They should also get the audio file
+            for c in mainscreens:
+                if sbs.get_ship_of_client(c):
+                    sbs.play_audio_file(c,file,audio_volume,audio_pitch)
+                    sbs.send_story_dialog(c, "Incoming Comms Message",m,get_face(from_id)," #ffe600")
+
+        with comms_override(ship,from_id):
+            # BOTH OF THESE SHOW ARTEMIS
+            # comms_message(message, from_id, ship, title, face, format, title_color)
+            comms_receive(message,title,face,format,title_color)
+            # <<[red,format] "{}"
+            # # TODO: Figure out a way to allow for using multiple choices
+            # % {message}
+
+
+=== prefab_comms_onscreen
+" Use this prefab to get a fancy 'Incoming Comms from X' button when desired.
+" Then when you press it you get the message, and the face shows up on the mainscreen.
+" If using an audio file, the path must be relative to the MISSION DIR!
+" So, if your audio file is located at `C:/user/Cosmos/data/missions/YourMission/audio/your_file.wav`,
+" you should use `audio/your_file` as the audio_file value.
+" If `to_id_set` is not set, it will be sent to all player ships.
+metadata: ```
+type: prefab/comms/onscreen
+from_id: 
+to_id_set: 
+message:
+title:
+title_format: red
+message_format: white
+face:
+audio_file:
+audio_volume: 1.0
+audio_pitch: 1.0
+```
+    if from_id is not None:
+        if audio_file is not None:
+            set_inventory_value(from_id,"audio_file",audio_file)
+            set_inventory_value(from_id,"audio_volume",audio_volume)
+            set_inventory_value(from_id,"audio_pitch",audio_pitch)
+
+        # This tells //comms below that this ship is applicable
+        if message is None:
+            message = "Message not defined"
+        set_inventory_value(from_id,"comms_message",message)
+        if title is None:
+            title = "Title is not defined"
+        set_inventory_value(from_id,"comms_message_title",title)
+        set_inventory_value(from_id,"comms_message_format",message_format)
+        set_inventory_value(from_id,"comms_title_format",title_format)
+        if face is not None:
+            set_face(from_id,face)
+        if to_id_set is None:
+            to_id_set = role("__player__")
+        for p in to_id_set:
+            set_inventory_value(p,"incoming_comms_button",from_id)
+            task_schedule(play_incoming_message, {"ship": p})
+        
+
+# //enable/comms if has_role(COMMS_ORIGIN_ID, "__player__")
+# //comms if has_role(COMMS_ORIGIN_ID, "__player__") and get_inventory_value(COMMS_ORIGIN_ID, "incoming_comms_button") is not None
+#     incoming_id = get_inventory_value(COMMS_ORIGIN_ID,"incoming_comms_button")
+#     obj = to_object(incoming_id)
+#     if obj is not None:
+#         n = obj.name
+#         if n is None:
+#             n = "Unknown Source"
+#         face = faces.get_face(incoming_id)
+#         if face is None:
+#             face = random_terran()
+#         =$commFace yellow,white,face
+#         with comms_override(COMMS_ORIGIN_ID, incoming_id):
+#             + !1^0[$commFace] "Incoming Comms from {n}" //comms/incoming_comms
+            
+# //comms/incoming_comms
+#     incoming_id = get_inventory_value(COMMS_ORIGIN_ID,"incoming_comms_button")
+#     obj = to_object(incoming_id)
+#     if obj is not None:
+#         message = get_inventory_value(incoming_id, "comms_message", "*%$*#(##&^)")
+#         title = get_inventory_value(incoming_id, "comms_message_title", "$(&^)%($*(%))")
+#         with comms_override(COMMS_ORIGIN_ID, incoming_id):
+#             << "{title}"
+#                 % {message}
+
+
