@@ -1,5 +1,5 @@
 ## Drop_Off by Jim Gillispie (orginally by Andre Odendaal in Artemis 2.x)
-## THIS IS MISSION VERSION: 1.2.8
+## THIS IS MISSION VERSION: 1.2.10
 ##
 ## UPDATE HISTORY
 ## 1.0.0    initial release
@@ -75,12 +75,15 @@
 ##          tweaked Gaea's accretion disc color
 ##          fixed missing Comms Badge problem
 ##
-## Future:  update nebulae to use new functions? Or upgrade old functions to use Warp slowing?
+## 1.2.10   updated to work with Cosmos .exe version 1.2.10 and also probably 1.3.0 (using MAST libraries 1.3.0)
+##          updated terrain_DOUBLE.py to match latest MAST libraries update
+##          fixed Gaia's accretion disc position and color
+##          added additional Torgoth fleet at DIFFICULTY 11
+##
+## Future:  update nebulae to use new (non-test) spawn functions? Find a way to get dark blue nebulas with the new functions? (test functions in tile.py still work, but are dated)
 ##          ability for Skaraans to detect where the commanders are?
 ##          reminder about tricksy Skaraan tech? 
 ##          allow players to surrender Cmdr Thompson to Skaraan justice? (e.g. jettison him into an "escape pod", i.e. shuttle?) Maybe Cmdr Richards too? A moral dilemma? What would Picard do? Then just auto-fail the mission.
 ##          Comms "Receiving Hail" button for voiced dialog? Replayablity of messages warrented?
-##          further tweak Gaia the black hole's accrection disc, distance, density, gravity, etc. for maximum realism
 ##          fix PNG image stretching at certain resolutions
-##          find a way to get blue nebulas with the new functions (test functions in tile.py still work, but are dated)
-##          fix missing Comms Badge on stations with lifeforms
+
