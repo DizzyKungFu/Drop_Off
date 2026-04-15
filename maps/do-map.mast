@@ -3,7 +3,7 @@
 " (This is a recreation of a mission by Andre Odendaal, from an earlier version of Artemis.)
 
 ## Drop_Off by Jim Gillispie (orginally by Andre Odendaal in Artemis 2.x)
-## THIS IS MISSION VERSION: 1.2.8
+## THIS IS MISSION VERSION: 1.2.10
 ##
 ## UPDATE HISTORY
 ## 1.0.0    initial release
@@ -79,15 +79,17 @@
 ##          tweaked Gaea's accretion disc color
 ##          fixed missing Comms Badge problem
 ##
-## Future:  update nebulae to use new functions? Or upgrade old functions to use Warp slowing?
+## 1.2.10   updated to work with Cosmos .exe version 1.2.10 and also probably 1.3.0 (using MAST libraries 1.3.0)
+##          updated terrain_DOUBLE.py to match latest MAST libraries update
+##          fixed Gaia's accretion disc position and color
+##          added additional Torgoth fleet at DIFFICULTY 11
+##
+## Future:  update nebulae to use new (non-test) spawn functions? Find a way to get dark blue nebulas with the new functions? (test functions in tile.py still work, but are dated)
 ##          ability for Skaraans to detect where the commanders are?
 ##          reminder about tricksy Skaraan tech? 
 ##          allow players to surrender Cmdr Thompson to Skaraan justice? (e.g. jettison him into an "escape pod", i.e. shuttle?) Maybe Cmdr Richards too? A moral dilemma? What would Picard do? Then just auto-fail the mission.
 ##          Comms "Receiving Hail" button for voiced dialog? Replayablity of messages warrented?
-##          further tweak Gaia the black hole's accrection disc, distance, density, gravity, etc. for maximum realism
 ##          fix PNG image stretching at certain resolutions
-##          find a way to get blue nebulas with the new functions (test functions in tile.py still work, but are dated)
-##          fix missing Comms Badge on stations with lifeforms
 
 
 metadata: ```
@@ -190,65 +192,60 @@ Properties:
     ## Bug registered at: https://github.com/artemis-sbs/LegendaryMissions/issues/344
 
     ## Since that's broke, I'm freeking going to hand-make an accretion disc!!! But damn, this is a lot of work!
+
     ## NORTH TAIL (Removed closest nebula to reduce density)
-/*     eventhorizon01 = terrain_spawn(64000, 0, -24000,None, "#, nebula", "nebula", "behav_nebula")
-    terrain_setup_nebula_red(eventhorizon01)
-    eventhorizon01.blob.set("unselectable", 1) */
+    #eventhorizon01 = terrain_spawn(64000, 0, -24000,None, "#, nebula", "nebula", "behav_nebula")
+    #eventhorizon01.blob.set("unselectable", 1)
     eventhorizon02 = terrain_spawn(64500, 0, -23000,None, "#, nebula", "nebula", "behav_nebula")
-#    terrain_setup_nebula_red(eventhorizon02)
+    terrain_setup_nebula(eventhorizon02, 1200, 0.7, "red")
     eventhorizon02.blob.set("unselectable", 1)
     eventhorizon03 = terrain_spawn(65500, 0, -22500,None, "#, nebula", "nebula", "behav_nebula")
-#    terrain_setup_nebula_red(eventhorizon03)
+    terrain_setup_nebula(eventhorizon03, 1200, 0.7, "red")
     eventhorizon03.blob.set("unselectable", 1)
     ## SOUTH TAIL (Removed closest nebula to reduce density)
-/*     eventhorizon04 = terrain_spawn(64000, 0, -26000,None, "#, nebula", "nebula", "behav_nebula")
-    terrain_setup_nebula_red(eventhorizon04)
-    eventhorizon04.blob.set("unselectable", 1) */
+    #eventhorizon04 = terrain_spawn(64000, 0, -26000,None, "#, nebula", "nebula", "behav_nebula")
+    #eventhorizon04.blob.set("unselectable", 1)
     eventhorizon05 = terrain_spawn(63500, 0, -27000,None, "#, nebula", "nebula", "behav_nebula")
-#    terrain_setup_nebula_red(eventhorizon05)
+    terrain_setup_nebula(eventhorizon05, 1200, 0.7, "red")
     eventhorizon05.blob.set("unselectable", 1)
     eventhorizon06 = terrain_spawn(62500, 0, -27500,None, "#, nebula", "nebula", "behav_nebula")
-#    terrain_setup_nebula_red(eventhorizon06)
+    terrain_setup_nebula(eventhorizon06, 1200, 0.7, "red")
     eventhorizon06.blob.set("unselectable", 1)
     ## NORTH-EAST TAIL (Removed closest nebula to reduce density)
-/*     eventhorizon07 = terrain_spawn(64900, 0, -24450,None, "#, nebula", "nebula", "behav_nebula")
-    terrain_setup_nebula_red(eventhorizon07)
-    eventhorizon07.blob.set("unselectable", 1) */
-    eventhorizon08 = terrain_spawn(66000, 0, -24250,None, "#, nebula", "nebula", "behav_nebula")
-#    terrain_setup_nebula_red(eventhorizon08)
+    #eventhorizon07 = terrain_spawn(64900, 0, -24450,None, "#, nebula", "nebula", "behav_nebula")
+    #eventhorizon07.blob.set("unselectable", 1)
+    eventhorizon08 = terrain_spawn(66000, 0, -24400,None, "#, nebula", "nebula", "behav_nebula")
+    terrain_setup_nebula(eventhorizon08, 1200, 0.7, "red")
     eventhorizon08.blob.set("unselectable", 1)
-    eventhorizon09 = terrain_spawn(67000, 0, -24750,None, "#, nebula", "nebula", "behav_nebula")
-#    terrain_setup_nebula_red(eventhorizon09)
+    eventhorizon09 = terrain_spawn(67000, 0, -25000,None, "#, nebula", "nebula", "behav_nebula")
+    terrain_setup_nebula(eventhorizon09, 1200, 0.7, "red")
     eventhorizon09.blob.set("unselectable", 1)
     ## NORTH-WEST TAIL (Removed closest nebula to reduce density)
-/*     eventhorizon10 = terrain_spawn(63100, 0, -24450,None, "#, nebula", "nebula", "behav_nebula")
-    terrain_setup_nebula_red(eventhorizon10)
-    eventhorizon10.blob.set("unselectable", 1) */
-    eventhorizon11 = terrain_spawn(62250, 0, -23750,None, "#, nebula", "nebula", "behav_nebula")
-#    terrain_setup_nebula_red(eventhorizon11)
+    #eventhorizon10 = terrain_spawn(63100, 0, -24450,None, "#, nebula", "nebula", "behav_nebula")
+    #eventhorizon10.blob.set("unselectable", 1)
+    eventhorizon11 = terrain_spawn(62400, 0, -23600,None, "#, nebula", "nebula", "behav_nebula")
+    terrain_setup_nebula(eventhorizon11, 1200, 0.7, "red")
     eventhorizon11.blob.set("unselectable", 1)
-    eventhorizon12 = terrain_spawn(62250, 0, -22500,None, "#, nebula", "nebula", "behav_nebula")
-#    terrain_setup_nebula_red(eventhorizon12)
+    eventhorizon12 = terrain_spawn(62600, 0, -22400,None, "#, nebula", "nebula", "behav_nebula")
+    terrain_setup_nebula(eventhorizon12, 1200, 0.7, "red")
     eventhorizon12.blob.set("unselectable", 1)
     ## SOUTH-EAST TAIL (Removed closest nebula to reduce density)
-/*     eventhorizon13 = terrain_spawn(64900, 0, -25550,None, "#, nebula", "nebula", "behav_nebula")
-    terrain_setup_nebula_red(eventhorizon13)
-    eventhorizon13.blob.set("unselectable", 1) */
-    eventhorizon14 = terrain_spawn(65750, 0, -26250,None, "#, nebula", "nebula", "behav_nebula")
-#    terrain_setup_nebula_red(eventhorizon14)
+    #eventhorizon13 = terrain_spawn(64900, 0, -25550,None, "#, nebula", "nebula", "behav_nebula")
+    #eventhorizon13.blob.set("unselectable", 1)
+    eventhorizon14 = terrain_spawn(65600, 0, -26400,None, "#, nebula", "nebula", "behav_nebula")
+    terrain_setup_nebula(eventhorizon14, 1200, 0.7, "red")
     eventhorizon14.blob.set("unselectable", 1)
-    eventhorizon15 = terrain_spawn(66000, 0, -27250,None, "#, nebula", "nebula", "behav_nebula")
-#    terrain_setup_nebula_red(eventhorizon15)
+    eventhorizon15 = terrain_spawn(65400, 0, -27400,None, "#, nebula", "nebula", "behav_nebula")
+    terrain_setup_nebula(eventhorizon15, 1200, 0.7, "red")
     eventhorizon15.blob.set("unselectable", 1)
     ## SOUTH-WEST TAIL (Removed closest nebula to reduce density)
-/*     eventhorizon16 = terrain_spawn(63100, 0, -25550,None, "#, nebula", "nebula", "behav_nebula")
-    terrain_setup_nebula_red(eventhorizon16)
-    eventhorizon16.blob.set("unselectable", 1) */
-    eventhorizon17 = terrain_spawn(62250, 0, -25750,None, "#, nebula", "nebula", "behav_nebula")
-#    terrain_setup_nebula_red(eventhorizon17)
+    #eventhorizon16 = terrain_spawn(63100, 0, -25550,None, "#, nebula", "nebula", "behav_nebula")
+    #eventhorizon16.blob.set("unselectable", 1)
+    eventhorizon17 = terrain_spawn(62000, 0, -25600,None, "#, nebula", "nebula", "behav_nebula")
+    terrain_setup_nebula(eventhorizon17, 1200, 0.7, "red")
     eventhorizon17.blob.set("unselectable", 1)
-    eventhorizon18 = terrain_spawn(61250, 0, -25250,None, "#, nebula", "nebula", "behav_nebula")
-#    terrain_setup_nebula_red(eventhorizon18)
+    eventhorizon18 = terrain_spawn(61000, 0, -25000,None, "#, nebula", "nebula", "behav_nebula")
+    terrain_setup_nebula(eventhorizon18, 1200, 0.7, "red")
     eventhorizon18.blob.set("unselectable", 1)
 
     ## Instead of random stations, create specific ones. These are all important to the story.
@@ -375,6 +372,8 @@ Properties:
         prefab_spawn(prefab_fleet_raider, {"race": "kralien", "fleet_difficulty": DIFFICULTY, "START_X": -74000, "START_Y": 0, "START_Z": 47000})
     if DIFFICULTY >= 10:
         prefab_spawn(prefab_fleet_raider, {"race": "kralien", "fleet_difficulty": DIFFICULTY, "START_X": 70000, "START_Y": 0, "START_Z": 62000})
+    if DIFFICULTY >= 11:
+        prefab_spawn(prefab_fleet_raider, {"race": "torgoth", "fleet_difficulty": DIFFICULTY, "START_X": 74000, "START_Y": 0, "START_Z": -74000})
 
     ## cheat by creating "spy asteroids" to watch the approaching Kraliens (name should be None to avoid notice)
     shared spya1 = to_object(terrain_spawn(-50000, 4, -70000,None, "#,asteroid,spyingeye", "plain_asteroid_9", "behav_asteroid"))
